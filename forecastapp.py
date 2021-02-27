@@ -319,7 +319,9 @@ if page == "Application":
 if page == "About":
     st.image("prophet.png")
     st.header("About")
-    st.write(" Author:")
+    st.markdown("Official documentation of [Facebook Prophet](https://facebook.github.io/prophet/)")
+    st.write("")
+    st.write("Author:")
     st.markdown(""" **[Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)**""")
     st.markdown("""[Source code](https://github.com/giandata/forecast-app)""")
 

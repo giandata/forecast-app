@@ -40,9 +40,9 @@ st.markdown("""The forecasting library used is **[Prophet](https://facebook.gith
 df =  pd.DataFrame()   
 
 st.subheader('1. Data loading')
+st.write("The dataset shall contains 2 columns: a column with dates named **ds** and a column with the historical serie named **y**.")
 
 input = st.file_uploader('Upload time series.')
-st.write("The dataset shall contains 2 columns: a column with dates named **ds** and a column with the historical serie named **y**.")
 
 if input:
     
@@ -59,30 +59,30 @@ if input:
             st.line_chart(df['y'],use_container_width =True,height = 300)
         
             
-st.subheader("2. Parameter settings")
+st.subheader("2. Parameters configuration")
 
 with st.beta_container():
     st.write('In this section you can modify the algorithm settings.')
         
     with st.beta_expander("Horizon"):
         periods_input = st.number_input('Select how many future periods to forecast.',
-        min_value = 1, max_value = 365)
+        min_value = 1, max_value = 365,value=90)
 
     with st.beta_expander("Seasonality"):
-        st.write("The seasonality depends on the specific case, therefore specific domain knoledge is requiered.")
+        st.write("The seasonality depends on the specific case, therefore specific domain knoledge is required.")
         seasonality = st.radio(label='Seasonality',options=['additive','multiplicative'])
 
-    with st.beta_expander("Componentes Trend"):
-        st.write("Añadir o quitar componentes")
+    with st.beta_expander("Trend components"):
+        st.write("Add or remove components")
         daily = st.checkbox("Daily")
         weekly= st.checkbox("Weekly")
         # añadir monthly 1-31 dias
-        monthly = st.checkbox("monthly")
+        monthly = st.checkbox("Monthly")
         yearly = st.checkbox("Yearly")
 
-    with st.beta_expander("Crecimiento"):
-        st.write('Prophet usa por defecto un modelo de crecimiento linear para el forecast.')
-        growth = st.radio(label='Modelo de crecimiento:',options=['linear',"logistic"]) 
+    with st.beta_expander("Growth model"):
+        st.write('Prophet uses by default a linear growth model.')
+        growth = st.radio(label='Growth model',options=['linear',"logistic"]) 
 
         if growth == 'linear':
             growth_settings= {
@@ -95,23 +95,23 @@ with st.beta_container():
             df['floor']=0
 
         if growth == 'logistic':
-            st.info('Configurar saturación')
+            st.info('Configure saturation')
             cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
             floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
         if floor > cap:
-            st.error('Saturación invalida')
+            st.error('Invalid settings.Cap must be higher then floor.')
             growth_settings={}
         else:
             growth_settings = {'cap':cap,'floor':floor}
             df['cap']=cap
             df['floor']=floor
 
-    with st.beta_expander('Vacaciones'):
-        if st.checkbox('Añadir holidays') is False:
+    with st.beta_expander('Holydays'):
+        if st.checkbox('Add country holidays') is False:
             holidays == True
 
-    with st.beta_expander('Hyperparametros'):
-        st.write('Es posible tunear los parametro de scaling')
+    with st.beta_expander('Hyperparameters'):
+        st.write('In this section it\'s possible to tune the scaling coefficients.')
             
         changepoint_scale_values= [0.01, 0.1, 0.5]
         seasonality_scale_values= [0.1, 1.0, 10.0]

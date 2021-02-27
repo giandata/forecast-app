@@ -36,7 +36,7 @@ def load_csv():
 
 st.title('Forecast DIY 🧙🏻')
 st.write('This app enables you to generate ime series forecast withouth any dependencies.')
-st.markdown("""The forecasting library used is **[Prophet]**(https://facebook.github.io/prophet/).""")
+st.markdown("""The forecasting library used is [Prophet](https://facebook.github.io/prophet/).""")
 df =  pd.DataFrame()   
 
 st.subheader('1. Cargar datos')

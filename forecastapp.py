@@ -33,7 +33,7 @@ def load_csv():
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input
 
-st.title('Forecast Application test')
+st.title('Forecast Application')
 st.write('Esta aplicación permite realizar forecast de serie temporales sin dependencias de codigo.')
 st.write("La libreria de fiorecasting utilizada es **Prophet**.")
 df =  pd.DataFrame()   

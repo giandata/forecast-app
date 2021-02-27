@@ -4,16 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pystan = "*"
-ephem = "*"
-pandas = "*"
-numpy = "*"
-streamlit = "*"
-plotly = "*"
-fbprophet = "==0.6"
-python-dateutil = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"

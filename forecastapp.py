@@ -107,7 +107,7 @@ with st.beta_container():
 
     with st.beta_expander('Holidays'):
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
-        
+        hol_list=[]
         for date, name in sorted(holidays.ES(years=2020).items()):
                 hol_list.append(items)
         st.write(holidays.Spain()) 

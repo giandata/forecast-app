@@ -35,13 +35,14 @@ def load_csv():
     return df_input
 
 st.title('Forecast DIY 🧙🏻')
-st.write('This app enables you to generate ime series forecast withouth any dependencies.')
+st.write('This app enables you to generate time series forecast withouth any dependencies.')
 st.markdown("""The forecasting library used is **[Prophet](https://facebook.github.io/prophet/)**.""")
 df =  pd.DataFrame()   
 
-st.subheader('1. Cargar datos')
+st.subheader('1. Data loading')
 
-input = st.file_uploader('Upload serie historica')
+input = st.file_uploader('Upload time series.')
+st.write("The dataset shall contains 2 columns: a column with dates named 'ds' and a column with the historical series named 'y'.)
 
 if input:
     
@@ -49,7 +50,7 @@ if input:
     st.info("Datos cargados correctamente")
 
 
-    if st.checkbox('Mostrar datos',key='show'):
+    if st.checkbox('Show data',key='show'):
         col1, col2 = st.beta_columns(2)
 
         with col1:
@@ -58,18 +59,18 @@ if input:
             st.line_chart(df['y'],use_container_width =True,height = 300)
         
             
-st.subheader("2. Configuración parametros")
+st.subheader("2. Parameter settings")
 
 with st.beta_container():
-    st.write('En esta seccion es posible modificar los settings del algoritmo de Prophet.')
+    st.write('In this section you can modify the algorithm settings.')
         
-    with st.beta_expander("Horizonte"):
-        periods_input = st.number_input('Seleccionar periodos de forecast en el futuro',
+    with st.beta_expander("Horizon"):
+        periods_input = st.number_input('Select how many future periods to forecast.',
         min_value = 1, max_value = 365)
 
-    with st.beta_expander("Estacionalidad"):
-        seasonality = st.radio(label='Business domain knowledge required',options=['additive','multiplicative'])
-        st.write(seasonality)
+    with st.beta_expander("Seasonality"):
+        st.write("The seasonality depends on the specific case, therefore specific domain knoledge is requiered.")
+        seasonality = st.radio(label='Seasonality',options=['additive','multiplicative'])
 
     with st.beta_expander("Componentes Trend"):
         st.write("Añadir o quitar componentes")

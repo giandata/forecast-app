@@ -108,7 +108,7 @@ with st.beta_container():
     with st.beta_expander('Holidays'):
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
 
-        st.write(holidays.Spain()) 
+        st.write(holidays.Spain(year=2021)) 
         
         country = st.text_input("Insert country")
        

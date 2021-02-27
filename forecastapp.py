@@ -221,17 +221,17 @@ if page == "Application":
             st.write("Cutoff (period): a forecast is made for every observed point between cutoff and cutoff + horizon.""")
 
             
-            
-        initial = st.number_input(value= 330,label="initial",min_value=120,max_value=2000)
-        initial = str(initial) + " days"
+        with st.beta_expander("Cross validation"):    
+            initial = st.number_input(value= 330,label="initial",min_value=120,max_value=2000)
+            initial = str(initial) + " days"
 
-        period = st.number_input(value= 180,label="period",min_value=1,max_value=365)
-        period = str(period) + " days"
+            period = st.number_input(value= 180,label="period",min_value=1,max_value=365)
+            period = str(period) + " days"
 
-        horizon = st.number_input(value= 120, label="horizon",min_value=30,max_value=366)
-        horizon = str(horizon) + " days"
+            horizon = st.number_input(value= 120, label="horizon",min_value=30,max_value=366)
+            horizon = str(horizon) + " days"
 
-        st.write(f"Here we do cross-validation to assess prediction performance on a horizon of **{horizon}** days, starting with **{initial}** days of training data in the first cutoff and then making predictions every **{period}** days.")
+            st.write(f"Here we do cross-validation to assess prediction performance on a horizon of **{horizon}** days, starting with **{initial}** days of training data in the first cutoff and then making predictions every **{period}** days.")
             
         with st.beta_expander("Metrics definition"):
                     st.write("Mse: mean absolute error")
@@ -240,23 +240,24 @@ if page == "Application":
                     st.write("Mape: Mean average percentage error")
                     st.write("Mdape: Median average percentage error")
             
-        if st.checkbox('Calculate metricas'):
-            df_cv = cross_validation(m, initial=initial,
+        with st.beta_expander("Metrics"):
+            if st.checkbox('Calculate metrics'):
+                df_cv = cross_validation(m, initial=initial,
                                             period=period, 
                                             horizon = horizon,
                                             parallel="processes")
             #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
             # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
                 
-            df_p = performance_metrics(df_cv)
-            st.dataframe(df_p)
+                df_p = performance_metrics(df_cv)
+                st.dataframe(df_p)
                 
-            metrics = ['mse','rmse','mae','mape','mdape','coverage']
+                metrics = ['mse','rmse','mae','mape','mdape','coverage']
                 
-            selected_metric = st.radio(label='Plot metric',options=metrics)
-            st.write(selected_metric)
-            fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
-            st.write(fig4)
+                selected_metric = st.radio(label='Plot metric',options=metrics)
+                st.write(selected_metric)
+                fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
+                st.write(fig4)
 
         st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
@@ -314,7 +315,7 @@ if page == "Application":
                     json.dump(model_to_json(m), fout)  
 
 if page == "About":
-    st.image("Prophet.png")
+    st.image("prophet.png")
     st.header("About")
     st.write(" Author:")
     st.markdown(""" **[Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)**""")

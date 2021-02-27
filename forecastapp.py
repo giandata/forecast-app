@@ -55,7 +55,7 @@ if input:
         with col1:
             st.write(df)
         with col2:
-            st.line_chart(df,use_container_width =True)
+            st.line_chart(df['y'],use_container_width =True,height = 500)
         
             
 st.subheader("2. Configuración parametros")

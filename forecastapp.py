@@ -106,6 +106,8 @@ with st.beta_container():
             df['floor']=floor
 
     with st.beta_expander('Holydays'):
+        country = st.text_input("Country",value="Italy",key="country")
+        st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
         if st.checkbox('Add country holidays') is False:
             holidays == True
         #
@@ -132,7 +134,7 @@ with st.beta_container():
                         changepoint_prior_scale=changepoint_scale,
                         seasonality_prior_scale= seasonality_scale)
             if holidays:
-                m.add_country_holidays(country_name='ES')
+                m.add_country_holidays(country_name=country)
                 
             if monthly:
                 m.add_seasonality(name='monthly', period=30.4375, fourier_order=4)

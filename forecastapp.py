@@ -108,9 +108,14 @@ with st.beta_container():
     with st.beta_expander('Holydays'):
         country = st.text_input("Country",value="Italy",key="country")
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
-        if st.checkbox('Add country holidays') is False:
-            holidays == True
-        #
+        try:
+            holidays.get_list(country)
+            st.write(sorted(holidays.country))
+            if st.checkbox('Add country holidays') is False:
+                holidays == True
+        except:
+            st.error(f"{ country } holidays not available")
+        
 
     with st.beta_expander('Hyperparameters'):
         st.write('In this section it\'s possible to tune the scaling coefficients.')

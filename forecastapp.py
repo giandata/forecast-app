@@ -169,6 +169,7 @@ if page == "Application":
     with st.beta_container():
         st.subheader("3. Forecast 🔮")
         st.write("Fit the model on the data and generate future prediction.")
+        st.write("Load a time series to activate.")
         if input:
             if st.checkbox("Initializa model (Fit)"):
                 if len(growth_settings)==2:

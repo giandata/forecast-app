@@ -48,9 +48,10 @@ if input:
     df = load_csv()
     st.info("Datos cargados correctamente")
 
-col1, col2 = st.beta_columns(2)
 
     if st.checkbox('Mostrar datos',key='show'):
+        col1, col2 = st.beta_columns(2)
+
         with col1:
             st.write(df)
         with col2:

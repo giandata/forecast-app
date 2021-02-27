@@ -105,13 +105,13 @@ with st.beta_container():
             df['cap']=cap
             df['floor']=floor
 
-    with st.beta_expander('Holydays'):
+    with st.beta_expander('Holidays'):
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
         country = st.text_input("Insert country",value="Italy",key="country")
         
         try:
-            # country_holidays = holidays.country()
-            st.write(sorted(country_holidays.{country}()))
+            country_holidays = holidays.{country}()
+            st.write(sorted(country_holidays.country()))
             if st.checkbox('Add country holidays') is False:
                 holidays == True
         except:

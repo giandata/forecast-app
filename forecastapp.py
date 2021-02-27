@@ -76,7 +76,6 @@ with st.beta_container():
         st.write("Add or remove components")
         daily = st.checkbox("Daily")
         weekly= st.checkbox("Weekly")
-        # añadir monthly 1-31 dias
         monthly = st.checkbox("Monthly")
         yearly = st.checkbox("Yearly")
 
@@ -109,6 +108,7 @@ with st.beta_container():
     with st.beta_expander('Holydays'):
         if st.checkbox('Add country holidays') is False:
             holidays == True
+        #
 
     with st.beta_expander('Hyperparameters'):
         st.write('In this section it\'s possible to tune the scaling coefficients.')
@@ -135,7 +135,7 @@ with st.beta_container():
                 m.add_country_holidays(country_name='ES')
                 
             if monthly:
-                m.add_seasonality(name='monthly', period=30.5, fourier_order=4)
+                m.add_seasonality(name='monthly', period=30.4375, fourier_order=4)
                 
             m.fit(df)
             future = m.make_future_dataframe(periods=periods_input,freq='D')

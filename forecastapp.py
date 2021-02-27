@@ -107,12 +107,12 @@ with st.beta_container():
 
     with st.beta_expander('Holidays'):
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
-        country = st.text_input("Insert country",value="Italy",key="country")
+        country = st.text_input("Insert country")
+        
         
         try:
-            country_holidays = holidays.get(country)()
-            st.write(country_holidays)
-            st.write(sorted(country_holidays.country()))
+            country_holidays = holidays.country()
+            st.write(country_holidays.get_list())
             if st.checkbox('Add country holidays') is False:
                 holidays == True
         except:

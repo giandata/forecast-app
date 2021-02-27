@@ -29,7 +29,7 @@ page = st.sidebar.radio("Tabs",tabs)
 
 def load_csv():
     df_input=pd.read_csv(input, sep = ';',encoding='utf-8')
-    #df_input['ds'] = pd.to_datetime(df_input['ds'],errors='coerce')
+    df_input['ds'] = pd.to_datetime(df_input['ds'],errors='coerce')
     df_input['ds'] = df_input['ds'].dt.strftime('%m/%d/%Y')
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input

@@ -105,28 +105,28 @@ with st.beta_container():
             df['cap']=cap
             df['floor']=floor
 
-    with st.beta_expander('Holidays'):
-        st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
+ #   with st.beta_expander('Holidays'):
+ #       st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
         
-        country = st.text_input("Insert country")
+ #       country = st.text_input("Insert country")
         
-        hol_list=[]
-        for date, name in sorted(holidays.country(years=2020).items()):
-                hol_list.append(name)
-        st.write(hol_list) 
+  #      hol_list=[]
+  #      for date, name in sorted(holidays.country(years=2020).items()):
+   #             hol_list.append(name)
+   #     st.write(hol_list) 
         
        
-        try:
-            country_holidays = holidays.country()
-            #st.write(country_holidays.get_list())
+   #     try:
+    #        country_holidays = holidays.country()
+    #        #st.write(country_holidays.get_list())
 
             
-            st.write(hol_list)
+     #       st.write(hol_list)
 
-            if st.checkbox('Add country holidays') is False:
-                holidays == True
-        except:
-            st.error(f"{ country } holidays not available")
+    #        if st.checkbox('Add country holidays') is False:
+    #            holidays == True
+     #   except:
+     #       st.error(f"{ country } holidays not available")
         
 
     with st.beta_expander('Hyperparameters'):

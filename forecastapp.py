@@ -110,7 +110,7 @@ with st.beta_container():
         country = st.text_input("Insert country",value="Italy",key="country")
         
         try:
-            country_holidays = holidays.{country}()
+            country_holidays = holidays.get(country)()
             st.write(sorted(country_holidays.country()))
             if st.checkbox('Add country holidays') is False:
                 holidays == True

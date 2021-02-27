@@ -18,7 +18,7 @@ import plotly.figure_factory as ff
 import base64
 import itertools
 
-st.set_page_config(page_title ="Streamlit App",page_icon="logo A.png")
+st.set_page_config(page_title ="Forecast App")
 
 
 tabs = ["Forecast","About"]
@@ -34,9 +34,9 @@ def load_csv():
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input
 
-st.title('Forecast Application')
-st.write('Esta aplicación permite realizar forecast de serie temporales sin dependencias de codigo.')
-st.write("La libreria de fiorecasting utilizada es **Prophet**.")
+st.title('Forecast DIY 🧙🏻')
+st.write('This app enables you to generate ime series forecast withouth any dependencies.')
+st.markdown("The forecasting library used is **[Prophet]**(https://facebook.github.io/prophet/).")
 df =  pd.DataFrame()   
 
 st.subheader('1. Cargar datos')
@@ -55,7 +55,7 @@ if input:
         with col1:
             st.write(df)
         with col2:
-            st.line_chart(df['y'],use_container_width =True,height = 500)
+            st.line_chart(df['y'],use_container_width =True,height = 300)
         
             
 st.subheader("2. Configuración parametros")

@@ -168,49 +168,50 @@ if page == "Application":
 
     with st.beta_container():
         st.subheader("3. Forecast 🔮")
-        st.write("Fit de model on the data and generate future prediction.")
-        if st.checkbox("Initializa model (Fit)"):
-            if len(growth_settings)==2:
-                m = Prophet(seasonality_mode=seasonality,
-                            daily_seasonality=daily,
-                            weekly_seasonality=weekly,
-                            yearly_seasonality=yearly,
-                            growth=growth,
-                            changepoint_prior_scale=changepoint_scale,
-                            seasonality_prior_scale= seasonality_scale)
-                if holidays:
-                    m.add_country_holidays(country_name=selected_country)
+        st.write("Fit the model on the data and generate future prediction.")
+        if input:
+            if st.checkbox("Initializa model (Fit)"):
+                if len(growth_settings)==2:
+                    m = Prophet(seasonality_mode=seasonality,
+                                daily_seasonality=daily,
+                                weekly_seasonality=weekly,
+                                yearly_seasonality=yearly,
+                                growth=growth,
+                                changepoint_prior_scale=changepoint_scale,
+                                seasonality_prior_scale= seasonality_scale)
+                    if holidays:
+                        m.add_country_holidays(country_name=selected_country)
+                        
+                    if monthly:
+                        m.add_seasonality(name='monthly', period=30.4375, fourier_order=4)
+                        
+                    m.fit(df)
+                    future = m.make_future_dataframe(periods=periods_input,freq='D')
+                    future['cap']=cap
+                    future['floor']=floor
+                    st.write("The model will produce forecast up to ", future['ds'].max())
+                        
+                else:
+                    st.warning('Invalid configuration')
+
+                st.success('Model fitted succesfully')
                     
-                if monthly:
-                    m.add_seasonality(name='monthly', period=30.4375, fourier_order=4)
-                    
-                m.fit(df)
-                future = m.make_future_dataframe(periods=periods_input,freq='D')
-                future['cap']=cap
-                future['floor']=floor
-                st.write("The model will produce forecast up to ", future['ds'].max())
-                    
-            else:
-                st.warning('Invalid configuration')
+                if st.checkbox("Generate forecast (Predict)"):
+                    forecast = m.predict(future)
+                    st.success('Prediction generated succeffully')
+                    st.dataframe(forecast)
+                    fig1 = m.plot(forecast)
+                    st.write(fig1)
 
-            st.success('Model fitted succesfully')
-                
-            if st.checkbox("Generate forecast (Predict)"):
-                forecast = m.predict(future)
-                st.success('Prediction generated succeffully')
-                st.dataframe(forecast)
-                fig1 = m.plot(forecast)
-                st.write(fig1)
+                    if growth == 'linear':
+                        fig2 = m.plot(forecast)
+                        a = add_changepoints_to_plot(fig2.gca(), m, forecast)
+                        st.write(fig2)
 
-                if growth == 'linear':
-                    fig2 = m.plot(forecast)
-                    a = add_changepoints_to_plot(fig2.gca(), m, forecast)
-                    st.write(fig2)
-
-            if st.button('Show components'):
-                fig3 = m.plot_components(forecast)
-                st.write(fig3)
-
+                if st.button('Show components'):
+                    fig3 = m.plot_components(forecast)
+                    st.write(fig3)
+        
 
         st.subheader('4. Model validation 🧪')
         st.write("In this section it is possible to do cross-validation of the model.")

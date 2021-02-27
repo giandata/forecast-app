@@ -112,7 +112,10 @@ with st.beta_container():
         
         try:
             country_holidays = holidays.country()
-            st.write(country_holidays.get_list())
+            #st.write(country_holidays.get_list())
+
+            st.write(for date, name in sorted(holidays.country().items())
+            
             if st.checkbox('Add country holidays') is False:
                 holidays == True
         except:

@@ -42,7 +42,7 @@ df =  pd.DataFrame()
 st.subheader('1. Data loading')
 
 input = st.file_uploader('Upload time series.')
-st.write("The dataset shall contains 2 columns: a column with dates named 'ds' and a column with the historical series named 'y'.)
+st.write("The dataset shall contains 2 columns: a column with dates named **ds** and a column with the historical serie named **y**.")
 
 if input:
     

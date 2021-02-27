@@ -48,10 +48,13 @@ if input:
     df = load_csv()
     st.info("Datos cargados correctamente")
 
-    if st.checkbox('Mostrar datos',key='show'):
-        st.write(df)
+col1, col2 = st.beta_columns(2)
 
-        #if st.checkbox('Visualizar datos'):
+    if st.checkbox('Mostrar datos',key='show'):
+        with col1:
+            st.write(df)
+        with col2:
+            st.linechart(df)
         
             
 st.subheader("2. Configuración parametros")

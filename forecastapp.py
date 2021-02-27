@@ -107,8 +107,10 @@ with st.beta_container():
 
     with st.beta_expander('Holidays'):
         st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
-
-        st.write(holidays.Spain(year=2021)) 
+        
+        for date, name in sorted(holidays.country(years=2020).items()):
+                hol_list.append(items)
+        st.write(holidays.Spain()) 
         
         country = st.text_input("Insert country")
        
@@ -116,8 +118,7 @@ with st.beta_container():
             country_holidays = holidays.country()
             #st.write(country_holidays.get_list())
 
-            for date, name in sorted(holidays.country().items()):
-                hol_list.append()
+            
             st.write(hol_list)
 
             if st.checkbox('Add country holidays') is False:

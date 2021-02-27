@@ -8,7 +8,7 @@ from fbprophet.diagnostics import cross_validation
 from fbprophet.diagnostics import performance_metrics
 from fbprophet.plot import plot_cross_validation_metric
 import json
-from fbprophet.serialize import model_to_json, model_from_json
+#from fbprophet.serialize import model_to_json, model_from_json
 import holidays
 
 import plotly as plt
@@ -255,9 +255,9 @@ with st.beta_container():
             href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
             st.markdown(href, unsafe_allow_html=True)
 
-    with col3:
-        if st.button('Exportar modelo'):
-            with open('serialized_model.json', 'w') as fout:
-                json.dump(model_to_json(m), fout)  
+    #with col3:
+        #if st.button('Exportar modelo'):
+            #with open('serialized_model.json', 'w') as fout:
+                #json.dump(model_to_json(m), fout)  
 
     

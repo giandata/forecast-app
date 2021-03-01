@@ -26,6 +26,7 @@ st.set_page_config(page_title ="Forecast App")
 tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
 
+@st.cache(persist=True,suppress_st_warning=True,show_spinner= True)
 def load_csv():
     
     df_input = pd.DataFrame()   # fa il dataframe
@@ -33,36 +34,21 @@ def load_csv():
     df_input=pd.read_csv(input,sep=None , encoding='utf-8',
                             parse_dates=True,
                             infer_datetime_format=True)
-    
-        
-    st.write("Columns:")
-    st.write(list(df_input.columns))
-    
-    columns = list(df_input.columns)
-    
+    return df_input
 
-    col1,col2 = st.beta_columns(2)
-    
-    with col1:
-        date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
-    
-    with col2:
-        metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
-    
-    # rinomina colonne
-    df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
-
+def prep_data(df):
+# rinomina colonne
+    df_input = df.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
     st.markdown("The selected date column is now labeled as **ds** and the values columns as **y**")
     df_input = df_input[['ds','y']]
-    
+    # assicuro che sia datetime
+    #df_input['ds'] = pd.to_datetime(df_input['ds'])
     df_input =  df_input.sort_values(by='ds',ascending=True)
-
     return df_input
 
 
     #df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
-    # assicuro che sia datetime
-    #df_input['ds'] = pd.to_datetime(df_input['ds'])
+    
     
     # uso  solo la colonna 0 e 1
     #df_input = (df_input.iloc[:,[0,1]])
@@ -92,6 +78,23 @@ if page == "Application":
         with st.spinner('Loading data..'):
             df = load_csv()
             
+
+            st.write("Columns:")
+            st.write(list(df.columns))
+    
+            columns = list(df.columns)
+    
+            col1,col2 = st.beta_columns(2)
+    
+            with col1:
+                date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
+    
+            with col2:
+                metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
+
+            df = prep_data(df)
+
+
         if st.checkbox('Show data',key='show'):
             with st.spinner('Plotting data..'):
         
@@ -163,37 +166,37 @@ if page == "Application":
                 years=[2021]
                 selected_country = st.selectbox(label="Select country",options=countries)
 
-                if selected_country=='Italy':
-                            for date, name in sorted(holidays.IT(years=years).items()):
-                                st.write(date,name) 
+                if selected_country == 'Italy':
+                    for date, name in sorted(holidays.IT(years=years).items()):
+                        st.write(date,name) 
                             
-                if selected_country=='Spain':
+                if selected_country == 'Spain':
                     
                     for date, name in sorted(holidays.ES(years=years).items()):
                             st.write(date,name)                      
 
-                if selected_country=='United States':
+                if selected_country == 'United States':
                     
                     for date, name in sorted(holidays.US(years=years).items()):
                             st.write(date,name)
                             
-                if selected_country=='France':
+                if selected_country == 'France':
                     
                     for date, name in sorted(holidays.FR(years=years).items()):
                             st.write(date,name)
                             
-                if selected_country=='Germany':
+                if selected_country == 'Germany':
                     
                     for date, name in sorted(holidays.DE(years=years).items()):
                             st.write(date,name)
                             
-                if selected_country=='Ukraine':
+                if selected_country == 'Ukraine':
                     
                     for date, name in sorted(holidays.UKR(years=years).items()):
                             st.write(date,name)
 
                 else:
-                    holidays == False
+                    holidays = False
                             
                 holidays = st.checkbox('Add country holidays to the model')
                     
@@ -219,8 +222,8 @@ if page == "Application":
         st.write("Fit the model on the data and generate future prediction.")
         st.write("Load a time series to activate.")
         if input:
-
-            if st.checkbox("Initializa model (Fit)"):
+            
+            if st.checkbox("Initialize model (Fit)",key="fit"):
                 if len(growth_settings)==2:
                     m = Prophet(seasonality_mode=seasonality,
                                 daily_seasonality=daily,
@@ -237,23 +240,22 @@ if page == "Application":
 
                     with st.spinner('Fitting the model..'):
 
-                        m.fit(df)
+                        m = m.fit(df)
                         future = m.make_future_dataframe(periods=periods_input,freq='D')
                         future['cap']=cap
                         future['floor']=floor
                         st.write("The model will produce forecast up to ", future['ds'].max())
-                        st.success('Model fitted succesfully')
+                        st.success('Model fitted successfully')
 
                 else:
                     st.warning('Invalid configuration')
 
-                
-                    
-                if st.checkbox("Generate forecast (Predict)"):
+            if st.checkbox("Generate forecast (Predict)",key="predict"):
+                try:
                     with st.spinner("Forecasting.."):
 
                         forecast = m.predict(future)
-                        st.success('Prediction generated succeffully')
+                        st.success('Prediction generated successfully')
                         st.dataframe(forecast)
                         fig1 = m.plot(forecast)
                         st.write(fig1)
@@ -262,12 +264,17 @@ if page == "Application":
                             fig2 = m.plot(forecast)
                             a = add_changepoints_to_plot(fig2.gca(), m, forecast)
                             st.write(fig2)
-
-                if st.button('Show components'):
+                except:
+                    st.warning("You need to train the model first.. ")
+                        
+            
+            if st.checkbox('Show components'):
+                try:
                     with st.spinner("Loading.."):
                         fig3 = m.plot_components(forecast)
                         st.write(fig3)
-        
+                except:
+                    st.warning("Requires forecast generation..") 
 
         st.subheader('4. Model validation 🧪')
         st.write("In this section it is possible to do cross-validation of the model.")
@@ -304,7 +311,7 @@ if page == "Application":
                     df_cv = cross_validation(m, initial=initial,
                                                 period=period, 
                                                 horizon = horizon,
-                                                parallel="processes")
+                                                parallel="threads")
                     #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
                     # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
                     

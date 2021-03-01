@@ -1,1 +1,0 @@
- Link to application: https://share.streamlit.io/giandata/forecast-app/forecastapp.py

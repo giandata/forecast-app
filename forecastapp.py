@@ -11,12 +11,14 @@ import json
 from fbprophet.serialize import model_to_json, model_from_json
 import holidays
 
+import altair as alt
 import plotly as plt
 import plotly.offline as pyoff
 import plotly.graph_objs as go
 import plotly.figure_factory as ff
 import base64
 import itertools
+from datetime import datetime
 
 st.set_page_config(page_title ="Forecast App")
 
@@ -25,14 +27,45 @@ tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
 
 def load_csv():
-    df_input=pd.read_csv(input, sep = ',',encoding='utf-8',parse_dates=True)
-    #df_input.drop(df_input.iloc[:,2:],inplace= True,axis =1)
-    #df_input['ds']= df_input.rename(df_input.iloc[0])
-    #df_input['y']= df_input.rename(df_input.iloc[1])
-    df_input['ds'] = pd.to_datetime(df_input['ds'],errors='coerce')
-    #df_input['ds'] = df_input['ds'].dt.strftime('%m/%d/%Y %h/m%')
+    
+    df_input = pd.DataFrame()   # fa il dataframe
+    df_input=pd.read_csv(input,encoding='utf-8',
+                        parse_dates=True,
+                        infer_datetime_format=True) 
+    
+    st.write("Columns:")
+    st.write(list(df_input.columns))
+    
+    columns = list(df_input.columns)
+
+    col1,col2 = st.beta_columns(2)
+    
+    with col1:
+        date_col = st.selectbox("Select date column",options=columns,key="date")
+    
+    with col2:
+        metric_col = st.selectbox("Select values column",options=columns,key="values")
+    # rinomina colonne
+    df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
+
+    st.markdown("The selected date column is now labeled **ds** and the values columns as **y**")
+    df_input = df_input[['ds','y']]
+    
     df_input =  df_input.sort_values(by='ds',ascending=True)
+
     return df_input
+
+
+    #df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
+    # assicuro che sia datetime
+    #df_input['ds'] = pd.to_datetime(df_input['ds'])
+    
+    # uso  solo la colonna 0 e 1
+    #df_input = (df_input.iloc[:,[0,1]])
+
+    # ordino per colonna 0
+
+
 
 if page == "Application":
 
@@ -45,7 +78,7 @@ if page == "Application":
     st.subheader('1. Data loading 🏋️')
 
     with st.beta_expander("Data format"):
-            st.write("Import a time series csv file. The dataset shall contains 2 columns: a first column labeled **ds** and a second column labeled **y**. The ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric, and represents the measurement we wish to forecast.")
+            st.write("Import a time series csv file. The dataset can contain multiple columns but you will need to select a column to be used as dates and a second column containing the metric you wish to forecast. The columns will be renamed as **ds** and **y** to be compliant with Prophet. Even though we are using the default Pandas date parser, the ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric.")
 
 
 
@@ -54,13 +87,20 @@ if page == "Application":
     if input:
         with st.spinner('Loading data..'):
             df = load_csv()
-            st.success("Data loaded")
-
-
-        if st.checkbox('Show data',key='show'):
             
-            st.write(df)
-            st.line_chart(df['y'],use_container_width =True,height = 300)
+        if st.checkbox('Show data',key='show'):
+            with st.spinner('Plotting data..'):
+        
+                st.dataframe(df)
+                st.write("Dataframe description:")
+
+                st.write(df.describe())
+                
+                line_chart = alt.Chart(df).mark_line().encode(
+                        x = 'ds:T',
+                        y = "y").properties(title="Time series preview").interactive()
+            st.altair_chart(line_chart,use_container_width=True)
+            #st.line_chart(df['y'],use_container_width =True,height = 300)
             
                 
     st.subheader("2. Parameters configuration 🛠️")

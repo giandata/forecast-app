@@ -103,7 +103,7 @@ if page == "Application":
                     line_chart = alt.Chart(df).mark_line().encode(
                         x = 'ds:T',
                         y = "y").properties(title="Time series preview").interactive()
-                st.altair_chart(line_chart,use_container_width=True)
+                    st.altair_chart(line_chart,use_container_width=True)
                 except:
                     st.line_chart(df['y'],use_container_width =True,height = 300)
             

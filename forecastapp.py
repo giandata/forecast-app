@@ -25,12 +25,12 @@ tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
 
 def load_csv():
-    df_input=pd.read_csv(input, sep = ';',encoding='utf-8',parse_dates=True)
+    df_input=pd.read_csv(input, sep = ',',encoding='utf-8',parse_dates=True)
     #df_input.drop(df_input.iloc[:,2:],inplace= True,axis =1)
     #df_input['ds']= df_input.rename(df_input.iloc[0])
     #df_input['y']= df_input.rename(df_input.iloc[1])
     df_input['ds'] = pd.to_datetime(df_input['ds'],errors='coerce')
-    df_input['ds'] = df_input['ds'].dt.strftime('%m/%d/%Y %h/m%')
+    #df_input['ds'] = df_input['ds'].dt.strftime('%m/%d/%Y %h/m%')
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input
 
@@ -43,7 +43,10 @@ if page == "Application":
     df =  pd.DataFrame()   
 
     st.subheader('1. Data loading 🏋️')
-    st.write("The dataset shall contains 2 columns: a first column with dates named **ds** and a column with the historical serie named **y**.")
+
+    with st.beta_expander("Data format"):
+            st.write("Import a time series csv file. The dataset shall contains 2 columns: a first column labeled **ds** and a second column labeled **y**. The ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric, and represents the measurement we wish to forecast.")
+
 
 
     input = st.file_uploader('Upload time series.')

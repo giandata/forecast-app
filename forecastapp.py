@@ -44,11 +44,9 @@ def load_csv():
     col1,col2 = st.beta_columns(2)
     
     with col1:
-        
         date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
     
     with col2:
-        
         metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
     
     # rinomina colonne
@@ -101,12 +99,13 @@ if page == "Application":
                 st.write("Dataframe description:")
 
                 st.write(df.describe())
-                
-                line_chart = alt.Chart(df).mark_line().encode(
+                try:
+                    line_chart = alt.Chart(df).mark_line().encode(
                         x = 'ds:T',
                         y = "y").properties(title="Time series preview").interactive()
-            st.altair_chart(line_chart,use_container_width=True)
-            #st.line_chart(df['y'],use_container_width =True,height = 300)
+                st.altair_chart(line_chart,use_container_width=True)
+                except:
+                    st.line_chart(df['y'],use_container_width =True,height = 300)
             
                 
     st.subheader("2. Parameters configuration 🛠️")

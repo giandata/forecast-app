@@ -29,26 +29,32 @@ page = st.sidebar.radio("Tabs",tabs)
 def load_csv():
     
     df_input = pd.DataFrame()   # fa il dataframe
-    df_input=pd.read_csv(input,encoding='utf-8',
-                        parse_dates=True,
-                        infer_datetime_format=True) 
     
+    df_input=pd.read_csv(input,sep=None , encoding='utf-8',
+                            parse_dates=True,
+                            infer_datetime_format=True)
+    
+        
     st.write("Columns:")
     st.write(list(df_input.columns))
     
     columns = list(df_input.columns)
+    
 
     col1,col2 = st.beta_columns(2)
     
     with col1:
-        date_col = st.selectbox("Select date column",options=columns,key="date")
+        
+        date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
     
     with col2:
-        metric_col = st.selectbox("Select values column",options=columns,key="values")
+        
+        metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
+    
     # rinomina colonne
     df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
 
-    st.markdown("The selected date column is now labeled **ds** and the values columns as **y**")
+    st.markdown("The selected date column is now labeled as **ds** and the values columns as **y**")
     df_input = df_input[['ds','y']]
     
     df_input =  df_input.sort_values(by='ds',ascending=True)
@@ -113,11 +119,11 @@ if page == "Application":
             min_value = 1, max_value = 366,value=90)
 
         with st.beta_expander("Seasonality"):
-            st.write("The seasonality depends on the specific case, therefore specific domain knoledge is required.")
+            st.write("The seasonality depends on the specific case, therefore specific domain knowledge is required.")
             seasonality = st.radio(label='Seasonality',options=['additive','multiplicative'])
 
         with st.beta_expander("Trend components"):
-            st.write("Add or remove components")
+            st.write("Add or remove components:")
             daily = st.checkbox("Daily")
             weekly= st.checkbox("Weekly")
             monthly = st.checkbox("Monthly")
@@ -259,8 +265,9 @@ if page == "Application":
                             st.write(fig2)
 
                 if st.button('Show components'):
-                    fig3 = m.plot_components(forecast)
-                    st.write(fig3)
+                    with st.spinner("Loading.."):
+                        fig3 = m.plot_components(forecast)
+                        st.write(fig3)
         
 
         st.subheader('4. Model validation 🧪')

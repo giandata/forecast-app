@@ -307,14 +307,21 @@ if page == "Application":
         with st.beta_expander("Metrics"):
             if st.checkbox('Calculate metrics'):
                 with st.spinner("Cross validating.."):
-
-                    df_cv = cross_validation(m, initial=initial,
-                                                period=period, 
-                                                horizon = horizon,
-                                                parallel="threads")
-                    #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
-                    # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
-                    
+                    try:
+                        try:     
+                            df_cv = cross_validation(m, initial=initial,
+                                                    period=period, 
+                                                    horizon = horizon,
+                                                    parallel="processes")
+                        #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
+                        # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
+                        except:
+                            df_cv = cross_validation(m, initial=initial,
+                                                    period=period, 
+                                                    horizon = horizon,
+                                                    parallel="threads")
+                    except:
+                        st.write("Invalid configuration")    
                     df_p = performance_metrics(df_cv)
                     st.dataframe(df_p)
                     
@@ -338,26 +345,29 @@ if page == "Application":
         rmses = []  # Store the RMSEs for each params here
 
         if st.button("Optimize hyperparameters"):
-            with st.spinner("Finiding best combination. Please wait.."):
+            try:
+                with st.spinner("Finding best combination. Please wait.."):
 
 
-                # Use cross validation to evaluate all parameters
-                for params in all_params:
-                    m = Prophet(**params).fit(df)  # Fit model with given params
-                    df_cv = cross_validation(m, initial=initial,
-                                                    period=period,
-                                                    horizon=horizon,
-                                                    parallel="threads")
-                    df_p = performance_metrics(df_cv, rolling_window=1)
-                    rmses.append(df_p['rmse'].values[0])
+                    # Use cross validation to evaluate all parameters
+                    for params in all_params:
+                        m = Prophet(**params).fit(df)  # Fit model with given params
+                        df_cv = cross_validation(m, initial=initial,
+                                                        period=period,
+                                                        horizon=horizon,
+                                                        parallel="threads")
+                        df_p = performance_metrics(df_cv, rolling_window=1)
+                        rmses.append(df_p['rmse'].values[0])
 
-                # Find the best parameters
-                tuning_results = pd.DataFrame(all_params)
-                tuning_results['rmse'] = rmses
-                st.write(tuning_results)
-                    
-                best_params = all_params[np.argmin(rmses)]
-                st.write(f'The best parameter tuning is {best_params}')
+                    # Find the best parameters
+                    tuning_results = pd.DataFrame(all_params)
+                    tuning_results['rmse'] = rmses
+                    st.write(tuning_results)
+                        
+                    best_params = all_params[np.argmin(rmses)]
+                    st.write(f'The best parameter tuning is {best_params}')
+            except:
+                st.info("Something went wrong..)
 
         st.subheader('6. Export results ✨')
             

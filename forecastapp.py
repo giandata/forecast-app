@@ -49,9 +49,9 @@ if page == "Application":
     input = st.file_uploader('Upload time series.')
 
     if input:
-        
-        df = load_csv()
-        st.success("Data loaded")
+        with st.spinner('Loading data..'):
+            df = load_csv()
+            st.success("Data loaded")
 
 
         if st.checkbox('Show data',key='show'):
@@ -171,6 +171,7 @@ if page == "Application":
         st.write("Fit the model on the data and generate future prediction.")
         st.write("Load a time series to activate.")
         if input:
+
             if st.checkbox("Initializa model (Fit)"):
                 if len(growth_settings)==2:
                     m = Prophet(seasonality_mode=seasonality,
@@ -185,29 +186,34 @@ if page == "Application":
                         
                     if monthly:
                         m.add_seasonality(name='monthly', period=30.4375, fourier_order=4)
-                        
-                    m.fit(df)
-                    future = m.make_future_dataframe(periods=periods_input,freq='D')
-                    future['cap']=cap
-                    future['floor']=floor
-                    st.write("The model will produce forecast up to ", future['ds'].max())
-                        
+
+                    with st.spinner('Fitting the model..'):
+
+                        m.fit(df)
+                        future = m.make_future_dataframe(periods=periods_input,freq='D')
+                        future['cap']=cap
+                        future['floor']=floor
+                        st.write("The model will produce forecast up to ", future['ds'].max())
+                        st.success('Model fitted succesfully')
+
                 else:
                     st.warning('Invalid configuration')
 
-                st.success('Model fitted succesfully')
+                
                     
                 if st.checkbox("Generate forecast (Predict)"):
-                    forecast = m.predict(future)
-                    st.success('Prediction generated succeffully')
-                    st.dataframe(forecast)
-                    fig1 = m.plot(forecast)
-                    st.write(fig1)
+                    with st.spinner("Forecasting.."):
 
-                    if growth == 'linear':
-                        fig2 = m.plot(forecast)
-                        a = add_changepoints_to_plot(fig2.gca(), m, forecast)
-                        st.write(fig2)
+                        forecast = m.predict(future)
+                        st.success('Prediction generated succeffully')
+                        st.dataframe(forecast)
+                        fig1 = m.plot(forecast)
+                        st.write(fig1)
+
+                        if growth == 'linear':
+                            fig2 = m.plot(forecast)
+                            a = add_changepoints_to_plot(fig2.gca(), m, forecast)
+                            st.write(fig2)
 
                 if st.button('Show components'):
                     fig3 = m.plot_components(forecast)
@@ -224,7 +230,7 @@ if page == "Application":
 
             
         with st.beta_expander("Cross validation"):    
-            initial = st.number_input(value= 330,label="initial",min_value=120,max_value=2000)
+            initial = st.number_input(value= 330,label="initial",min_value=30,max_value=1096)
             initial = str(initial) + " days"
 
             period = st.number_input(value= 180,label="period",min_value=1,max_value=365)
@@ -244,22 +250,24 @@ if page == "Application":
             
         with st.beta_expander("Metrics"):
             if st.checkbox('Calculate metrics'):
-                df_cv = cross_validation(m, initial=initial,
-                                            period=period, 
-                                            horizon = horizon,
-                                            parallel="processes")
-            #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
-            # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
-                
-                df_p = performance_metrics(df_cv)
-                st.dataframe(df_p)
-                
-                metrics = ['mse','rmse','mae','mape','mdape','coverage']
-                
-                selected_metric = st.radio(label='Plot metric',options=metrics)
-                st.write(selected_metric)
-                fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
-                st.write(fig4)
+                with st.spinner("Cross validating.."):
+
+                    df_cv = cross_validation(m, initial=initial,
+                                                period=period, 
+                                                horizon = horizon,
+                                                parallel="processes")
+                    #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
+                    # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
+                    
+                    df_p = performance_metrics(df_cv)
+                    st.dataframe(df_p)
+                    
+                    metrics = ['mse','rmse','mae','mape','mdape','coverage']
+                    
+                    selected_metric = st.radio(label='Plot metric',options=metrics)
+                    st.write(selected_metric)
+                    fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
+                    st.write(fig4)
 
         st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
@@ -274,56 +282,62 @@ if page == "Application":
         rmses = []  # Store the RMSEs for each params here
 
         if st.button("Optimize hyperparameters"):
+            with st.spinner("Finiding best combination. Please wait.."):
 
-            # Use cross validation to evaluate all parameters
-            for params in all_params:
-                m = Prophet(**params).fit(df)  # Fit model with given params
-                df_cv = cross_validation(m, initial=initial,
-                                                period=period,
-                                                horizon=horizon,
-                                                parallel="threads")
-                df_p = performance_metrics(df_cv, rolling_window=1)
-                rmses.append(df_p['rmse'].values[0])
 
-            # Find the best parameters
-            tuning_results = pd.DataFrame(all_params)
-            tuning_results['rmse'] = rmses
-            st.write(tuning_results)
-                
-            best_params = all_params[np.argmin(rmses)]
-            st.write(f'The best parameter tuning is {best_params}')
+                # Use cross validation to evaluate all parameters
+                for params in all_params:
+                    m = Prophet(**params).fit(df)  # Fit model with given params
+                    df_cv = cross_validation(m, initial=initial,
+                                                    period=period,
+                                                    horizon=horizon,
+                                                    parallel="threads")
+                    df_p = performance_metrics(df_cv, rolling_window=1)
+                    rmses.append(df_p['rmse'].values[0])
 
-        st.subheader('6. Export results')
+                # Find the best parameters
+                tuning_results = pd.DataFrame(all_params)
+                tuning_results['rmse'] = rmses
+                st.write(tuning_results)
+                    
+                best_params = all_params[np.argmin(rmses)]
+                st.write(f'The best parameter tuning is {best_params}')
+
+        st.subheader('6. Export results ✨')
             
         col1, col2, col3 = st.beta_columns(3)
 
         with col1:
-            if st.button('Export forecast'):
-                
-                export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']]).to_csv()
-                b64 = base64.b64encode(export_forecast.encode()).decode()
-                href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **forecast.csv**)'
-                st.markdown(href, unsafe_allow_html=True)
+            if st.button('Export forecast (.csv)'):
+                with st.spinner("Exporting..",key="csv"):
+
+                    export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']]).to_csv()
+                    b64 = base64.b64encode(export_forecast.encode()).decode()
+                    href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **forecast.csv**)'
+                    st.markdown(href, unsafe_allow_html=True)
             
         with col2:
-            if st.button("Export model metrics"):
-                b64 = base64.b64encode(df_p.encode()).decode()
-                href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
-                st.markdown(href, unsafe_allow_html=True)
+            if st.button("Export model metrics (.csv)"):
+                with st.spinner("Exporting..",key="metrics"):
+                    b64 = base64.b64encode(df_p.encode()).decode()
+                    href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
+                    st.markdown(href, unsafe_allow_html=True)
 
         with col3:
-            if st.button('Exportar model configuration ✨'):
-                with open('serialized_model.json', 'w') as fout:
-                    json.dump(model_to_json(m), fout)  
+            if st.button('Export model configuration (.json)'):
+                with st.spinner("Exporting..",key="json"):
+                    with open('serialized_model.json', 'w') as fout:
+                        json.dump(model_to_json(m), fout)  
 
 if page == "About":
     st.image("prophet.png")
     st.header("About")
-    st.markdown("Official documentation of [Facebook Prophet](https://facebook.github.io/prophet/)")
+    st.markdown("Official documentation of **[Facebook Prophet](https://facebook.github.io/prophet/)**")
+    st.markdown("Official documentation of **[Streamlit](https://docs.streamlit.io/en/stable/getting_started.html)**")
     st.write("")
     st.write("Author:")
     st.markdown(""" **[Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)**""")
-    st.markdown("""[Source code](https://github.com/giandata/forecast-app)""")
+    st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **27/02/2021**")
+    st.write("Last updated: **01/03/2021**")

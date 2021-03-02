@@ -87,19 +87,22 @@ if page == "Application":
 
         if st.checkbox('Show data',key='show'):
             with st.spinner('Plotting data..'):
-        
-                st.dataframe(df)
-                st.write("Dataframe description:")
+                col1,col2 = st.beta_columns(2)
+                with col1:
+                    st.dataframe(df)
+                    
+                with col2:    
+                    st.write("Dataframe description:")
+                    st.write(df.describe())
 
-                st.write(df.describe())
-                try:
-                    line_chart = alt.Chart(df).mark_line().encode(
-                        x = 'ds:T',
-                        y = "y:Q").properties(title="Time series preview").interactive()
-                    st.altair_chart(line_chart,use_container_width=True)
-                except:
-                    st.line_chart(df['y'],use_container_width =True,height = 300)
-  
+            try:
+                line_chart = alt.Chart(df).mark_line().encode(
+                    x = 'ds:T',
+                    y = "y:Q").properties(title="Time series preview").interactive()
+                st.altair_chart(line_chart,use_container_width=True)
+            except:
+                st.line_chart(df['y'],use_container_width =True,height = 300)
+
     st.subheader("2. Parameters configuration 🛠️")
 
     with st.beta_container():
@@ -333,8 +336,8 @@ if page == "Application":
                             fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
                             st.write(fig4)
 
-            else:
-                st.write("Create a forecast to see metrics")
+                else:
+                    st.write("Create a forecast to see metrics")
 
         st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
@@ -406,6 +409,8 @@ if page == "Application":
                         with st.spinner("Exporting..",key="json"):
                             with open('serialized_model.json', 'w') as fout:
                                 json.dump(model_to_json(m), fout)  
+            else:
+                st.write("Generate a forecast to download.")
 
 if page == "About":
     st.image("prophet.png")

@@ -309,7 +309,7 @@ if page == "Application":
             
         with st.beta_expander("Metrics"):
             if input:
-                if output = 1:
+                if output == 1:
                     if st.checkbox('Calculate metrics'):
                         with st.spinner("Cross validating.."):
                             try:

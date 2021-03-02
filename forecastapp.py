@@ -60,7 +60,7 @@ if page == "Application":
     
     if input is None:
         st.write("Or use sample dataset to try the application")
-        sample = st.checkbox("dowload sample data")
+        sample = st.checkbox("download sample data from GitHub")
 
     try:
         if sample:

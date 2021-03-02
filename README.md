@@ -12,7 +12,7 @@ The sections follow the process of building and evaluating a forecast:
 
 ### 3. Fit the model and predict future
 
-### 4. Evaluate and validate predicitions
+### 4. Evaluate and validate prediction
 
 ### 5. Hyperparameter tuning
 

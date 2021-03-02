@@ -64,7 +64,7 @@ if page == "Application":
 
     try:
         if sample:
-            st.markdown("""[download_link](https://gist.github.com/giandata/11feed2195ef8e8b53050ffc5beb532f)""")    
+            st.markdown("""[download_link](https://gist.github.com/giandata/e0b5c2d2e71d4fd4388295eb5b71aeeb)""")    
             
     except:
 
@@ -145,8 +145,11 @@ if page == "Application":
                 cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
                 floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
             if floor > cap:
-                st.error('Invalid settings.Cap must be higher then floor.')
+                st.error('Invalid settings. Cap must be higher then floor.')
                 growth_settings={}
+
+            if floor == cap:
+                st.warning('Cap must be higher than floor')
             else:
                 growth_settings = {'cap':cap,'floor':floor}
                 df['cap']=cap

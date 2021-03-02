@@ -26,7 +26,7 @@ st.set_page_config(page_title ="Forecast App")
 tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
 
-@st.cache(persist=True,suppress_st_warning=True,show_spinner= True)
+@st.cache(persist=False,suppress_st_warning=True,show_spinner= True)
 def load_csv():
     
     df_input = pd.DataFrame()  

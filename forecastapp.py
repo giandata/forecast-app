@@ -29,36 +29,22 @@ page = st.sidebar.radio("Tabs",tabs)
 @st.cache(persist=True,suppress_st_warning=True,show_spinner= True)
 def load_csv():
     
-    df_input = pd.DataFrame()   # fa il dataframe
-    
+    df_input = pd.DataFrame()  
     df_input=pd.read_csv(input,sep=None , encoding='utf-8',
                             parse_dates=True,
                             infer_datetime_format=True)
     return df_input
 
 def prep_data(df):
-# rinomina colonne
+
     df_input = df.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
     st.markdown("The selected date column is now labeled as **ds** and the values columns as **y**")
     df_input = df_input[['ds','y']]
-    # assicuro che sia datetime
-    #df_input['ds'] = pd.to_datetime(df_input['ds'])
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input
 
 
-    #df_input = df_input.rename({date_col:"ds",metric_col:"y"},errors='raise',axis=1)
-    
-    
-    # uso  solo la colonna 0 e 1
-    #df_input = (df_input.iloc[:,[0,1]])
-
-    # ordino per colonna 0
-
-
-
 if page == "Application":
-
 
     st.title('Forecast application 🧙🏻')
     st.write('This app enables you to generate time series forecast withouth any dependencies.')
@@ -66,34 +52,38 @@ if page == "Application":
     df =  pd.DataFrame()   
 
     st.subheader('1. Data loading 🏋️')
+    st.write("Import a time series csv file.")
+    with st.beta_expander("Data format"): 
+        st.write("The dataset can contain multiple columns but you will need to select a column to be used as dates and a second column containing the metric you wish to forecast. The columns will be renamed as **ds** and **y** to be compliant with Prophet. Even though we are using the default Pandas date parser, the ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric.")
 
-    with st.beta_expander("Data format"):
-            st.write("Import a time series csv file. The dataset can contain multiple columns but you will need to select a column to be used as dates and a second column containing the metric you wish to forecast. The columns will be renamed as **ds** and **y** to be compliant with Prophet. Even though we are using the default Pandas date parser, the ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric.")
+    input = st.file_uploader('')
+    
+    if input is None:
+        st.write("Or use sample dataset to try the application")
+        sample = st.checkbox("dowload sample data")
 
-
-
-    input = st.file_uploader('Upload time series.')
-
-    if input:
-        with st.spinner('Loading data..'):
-            df = load_csv()
+    try:
+        if sample:
+            st.markdown("""[download_link](https://gist.github.com/giandata/fa3e4be0e4cc37363c871127511de2de)""")    
             
+    except:
 
-            st.write("Columns:")
-            st.write(list(df.columns))
-    
-            columns = list(df.columns)
-    
-            col1,col2 = st.beta_columns(2)
-    
-            with col1:
-                date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
-    
-            with col2:
-                metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
+        if input:
+            with st.spinner('Loading data..'):
+                df = load_csv()
+        
+                st.write("Columns:")
+                st.write(list(df.columns))
+                columns = list(df.columns)
+        
+                col1,col2 = st.beta_columns(2)
+                with col1:
+                    date_col = st.selectbox("Select date column",index= 0,options=columns,key="date")
+                with col2:
+                    metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
 
-            df = prep_data(df)
-
+                df = prep_data(df)
+    
 
         if st.checkbox('Show data',key='show'):
             with st.spinner('Plotting data..'):
@@ -109,8 +99,7 @@ if page == "Application":
                     st.altair_chart(line_chart,use_container_width=True)
                 except:
                     st.line_chart(df['y'],use_container_width =True,height = 300)
-            
-                
+  
     st.subheader("2. Parameters configuration 🛠️")
 
     with st.beta_container():
@@ -228,6 +217,7 @@ if page == "Application":
         st.subheader("3. Forecast 🔮")
         st.write("Fit the model on the data and generate future prediction.")
         st.write("Load a time series to activate.")
+        
         if input:
             
             if st.checkbox("Initialize model (Fit)",key="fit"):
@@ -428,4 +418,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **01/03/2021**")
+    st.write("Last updated: **02/03/2021**")

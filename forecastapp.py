@@ -83,6 +83,7 @@ if page == "Application":
                     metric_col = st.selectbox("Select values column",index=1,options=columns,key="values")
 
                 df = prep_data(df)
+                output = 0
     
 
         if st.checkbox('Show data',key='show'):

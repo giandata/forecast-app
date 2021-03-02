@@ -2,7 +2,7 @@
 
 ## Web app developed with Streamlit & Prophet
 
-The application is a front end for Prophet forecasting algorithm.
+The application is a front end for Prophet forecasting algorithm. [Application link](https://share.streamlit.io/giandata/forecast-app/forecastapp.py)
 
 the section in the app follow the process of building and evaluating a forecast:
 
@@ -19,9 +19,7 @@ the section in the app follow the process of building and evaluating a forecast:
 ### 6. Export results
 
 
-[Application link](https://share.streamlit.io/giandata/forecast-app/forecastapp.py)
-
-### Authors
+### Author
 [Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)
 
 

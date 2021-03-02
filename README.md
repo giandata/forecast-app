@@ -4,7 +4,7 @@
 
 The application is a front end for Prophet forecasting algorithm. [Application link](https://share.streamlit.io/giandata/forecast-app/forecastapp.py)
 
-the section in the app follow the process of building and evaluating a forecast:
+The sections follow the process of building and evaluating a forecast:
 
 ### 1. Load the time series
 
@@ -19,6 +19,9 @@ the section in the app follow the process of building and evaluating a forecast:
 ### 6. Export results
 
 
+
+
+____________
 ### Author
 [Giancarlo Di Donato](https://www.linkedin.com/in/giancarlodidonato/)
 

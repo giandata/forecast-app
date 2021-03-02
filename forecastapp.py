@@ -64,7 +64,7 @@ if page == "Application":
 
     try:
         if sample:
-            st.markdown("""[download_link](https://gist.github.com/giandata/fa3e4be0e4cc37363c871127511de2de)""")    
+            st.markdown("""[download_link](https://gist.github.com/giandata/11feed2195ef8e8b53050ffc5beb532f)""")    
             
     except:
 

@@ -144,12 +144,12 @@ if page == "Application":
                 st.info('Configure saturation')
                 cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
                 floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
-            if floor > cap:
-                st.error('Invalid settings. Cap must be higher then floor.')
-                growth_settings={}
+                if floor > cap:
+                    st.error('Invalid settings. Cap must be higher then floor.')
+                    growth_settings={}
 
-            if floor == cap:
-                st.warning('Cap must be higher than floor')
+                if floor == cap:
+                    st.warning('Cap must be higher than floor')
             else:
                 growth_settings = {'cap':cap,'floor':floor}
                 df['cap']=cap

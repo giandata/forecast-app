@@ -142,6 +142,7 @@ if page == "Application":
 
             if growth == 'logistic':
                 st.info('Configure saturation')
+                
                 cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
                 floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
                 if floor > cap:
@@ -150,11 +151,15 @@ if page == "Application":
 
                 if floor == cap:
                     st.warning('Cap must be higher than floor')
-            else:
-                growth_settings = {'cap':cap,'floor':floor}
-                df['cap']=cap
-                df['floor']=floor
-
+                else:
+                    growth_settings = {
+                        'cap':cap,
+                        'floor':floor
+                        }
+                    df['cap']=cap
+                    df['floor']=floor
+            
+            
         with st.beta_expander('Holidays'):
             #st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
             

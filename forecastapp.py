@@ -434,4 +434,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **02/03/2021**")
+    st.write("Last updated: **05/03/2021**")

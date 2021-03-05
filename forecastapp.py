@@ -20,11 +20,14 @@ import base64
 import itertools
 from datetime import datetime
 
-st.set_page_config(page_title ="Forecast App")
+st.set_page_config(page_title ="Forecast App",
+                    page_icon="🔮",
+                    initial_sidebar_state="collapsed")
 
 
 tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
+
 
 #@st.cache(persist=False,suppress_st_warning=True,show_spinner= True)
 def load_csv():
@@ -43,8 +46,111 @@ def prep_data(df):
     df_input =  df_input.sort_values(by='ds',ascending=True)
     return df_input
 
+code1 = """                       
+st.dataframe(df)
+                       
+st.write(df.describe())
+
+try:
+    line_chart = alt.Chart(df).mark_line().encode(
+    x = 'ds:T',
+    y = "y:Q").properties(title="Time series preview").interactive()
+        st.altair_chart(line_chart,use_container_width=True)
+except:
+    st.line_chart(df['y'],use_container_width =True,height = 300) """ 
+code2="""
+ m = Prophet(
+    seasonality_mode=seasonality,
+    daily_seasonality=daily,
+    weekly_seasonality=weekly,
+    yearly_seasonality=yearly,
+    growth=growth,
+    changepoint_prior_scale=changepoint_scale,
+    seasonality_prior_scale= seasonality_scale)
+if holidays:
+    m.add_country_holidays(country_name=selected_country)
+                        
+if monthly:
+    m.add_seasonality(name='monthly', period=30.4375, fourier_order=5)
+
+m = m.fit(df)
+future = m.make_future_dataframe(periods=periods_input,freq='D')
+future['cap']=cap
+future['floor']=floor
+                """
+code3 = """
+try:     
+    df_cv = cross_validation(m, initial=initial,
+        period=period, 
+        horizon = horizon,
+        parallel="processes")
+except:
+    df_cv = cross_validation(m, initial=initial,
+        period=period, 
+        horizon = horizon,
+        parallel="threads")
+except:
+    st.write("Invalid configuration")    
+    df_p = performance_metrics(df_cv)
+    st.dataframe(df_p)
+
+metrics = ['mse','rmse','mae','mape','mdape','coverage']
+
+selected_metric = st.radio(label='Plot metric',options=metrics)
+st.write(selected_metric)
+fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
+st.write(fig4)
+"""
+code4 = """
+param_grid = {  
+            'changepoint_prior_scale': [0.01, 0.1, 0.5],
+            'seasonality_prior_scale': [0.1, 1.0, 10.0],
+             }
+
+# Generate all combinations of parameters
+all_params = [dict(zip(param_grid.keys(), v)) for v in itertools.product(*param_grid.values())]
+rmses = []  # Store the RMSEs for each params here
+
+# Use cross validation to evaluate all parameters
+for params in all_params:
+m = Prophet(**params).fit(df)  # Fit model with given params
+df_cv = cross_validation(m, initial=initial,
+                                period=period,
+                                horizon=horizon,
+                                parallel="threads")
+df_p = performance_metrics(df_cv, rolling_window=1)
+rmses.append(df_p['rmse'].values[0])
+
+# Find the best parameters
+tuning_results = pd.DataFrame(all_params)
+tuning_results['rmse'] = rmses
+st.write(tuning_results)
+
+best_params = all_params[np.argmin(rmses)]
+st.write('The best parameter combination is:')
+st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
+st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
+                        """
+
+code_options = ["Dataframe information","Model fitting","Cross validation","Hyperparam tuning"]
 
 if page == "Application":
+    #check = None  
+    #if check is not None:
+    #    st.code(code1)
+    #else :
+    #    st.code("nothing to show")
+    with st.sidebar:
+        with st.beta_expander("Code snippets"):
+            snippet = st.radio('Code snippets',options=code_options)    
+            if snippet == code_options[0]:
+                st.code(code1)
+            if snippet == code_options[1]:
+                st.code(code2)
+            if snippet == code_options[2]:
+                st.code(code3)
+            if snippet == code_options[3]:
+                st.code(code4)
 
     st.title('Forecast application 🧙🏻')
     st.write('This app enables you to generate time series forecast withouth any dependencies.')
@@ -86,7 +192,7 @@ if page == "Application":
                 output = 0
     
 
-        if st.checkbox('Show data',key='show'):
+        if st.checkbox('Chart data',key='show'):
             with st.spinner('Plotting data..'):
                 col1,col2 = st.beta_columns(2)
                 with col1:
@@ -99,10 +205,13 @@ if page == "Application":
             try:
                 line_chart = alt.Chart(df).mark_line().encode(
                     x = 'ds:T',
-                    y = "y:Q").properties(title="Time series preview").interactive()
+                    y = "y:Q",tooltip=['ds:T', 'y']).properties(title="Time series preview").interactive()
                 st.altair_chart(line_chart,use_container_width=True)
+                
             except:
                 st.line_chart(df['y'],use_container_width =True,height = 300)
+                
+            
 
     st.subheader("2. Parameters configuration 🛠️")
 
@@ -202,14 +311,6 @@ if page == "Application":
                     holidays = False
                             
                 holidays = st.checkbox('Add country holidays to the model')
-                    
-
-            #with col2:
-                #years = list(range(2000,2021,1))
-        
-                #years= st.multiselect("Add years",options=years)
-                #st.write(f'Adding years {years}')
-
 
         with st.beta_expander('Hyperparameters'):
             st.write('In this section it is possible to tune the scaling coefficients.')
@@ -326,6 +427,7 @@ if page == "Application":
                                                         period=period, 
                                                         horizon = horizon,
                                                         parallel="processes")
+                                    
                             #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
                             # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
                                 except:
@@ -333,6 +435,7 @@ if page == "Application":
                                                         period=period, 
                                                         horizon = horizon,
                                                         parallel="threads")
+                                    
                             except:
                                 st.write("Invalid configuration")    
                             df_p = performance_metrics(df_cv)
@@ -368,6 +471,7 @@ if page == "Application":
                     
                     with st.spinner("Finding best combination. Please wait.."):
 
+                        
 
                         # Use cross validation to evaluate all parameters
                         for params in all_params:
@@ -388,6 +492,7 @@ if page == "Application":
                         st.write('The best parameter combination is:')
                         st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
                         st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
+                    
             else:
                 st.write("Create a model to optimize")    
 

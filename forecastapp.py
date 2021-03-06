@@ -398,13 +398,13 @@ if page == "Application":
 
             
         with st.beta_expander("Cross validation"):    
-            initial = st.number_input(value= 330,label="initial",min_value=30,max_value=1096)
+            initial = st.number_input(value= 365,label="initial",min_value=30,max_value=1096)
             initial = str(initial) + " days"
 
-            period = st.number_input(value= 180,label="period",min_value=1,max_value=365)
+            period = st.number_input(value= 90,label="period",min_value=1,max_value=365)
             period = str(period) + " days"
 
-            horizon = st.number_input(value= 120, label="horizon",min_value=30,max_value=366)
+            horizon = st.number_input(value= 90, label="horizon",min_value=30,max_value=366)
             horizon = str(horizon) + " days"
 
             st.write(f"Here we do cross-validation to assess prediction performance on a horizon of **{horizon}** days, starting with **{initial}** days of training data in the first cutoff and then making predictions every **{period}** days.")
@@ -417,6 +417,7 @@ if page == "Application":
                     st.write("Mdape: Median average percentage error")
             
         with st.beta_expander("Metrics"):
+            
             if input:
                 if output == 1:
                     if st.checkbox('Calculate metrics'):
@@ -440,16 +441,18 @@ if page == "Application":
                                 st.write("Invalid configuration")    
                             df_p = performance_metrics(df_cv)
                             st.dataframe(df_p)
-                        
-                            metrics = ['mse','rmse','mae','mape','mdape','coverage']
-                        
-                            selected_metric = st.radio(label='Plot metric',options=metrics)
-                            st.write(selected_metric)
-                            fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
-                            st.write(fig4)
 
-                else:
-                    st.write("Create a forecast to see metrics")
+                            if st.checkbox("Plot metrics",key='metrics'):
+
+                                metrics = ['mse','rmse','mae','mape','mdape','coverage']
+
+                                selected_metric = st.selectbox(label="metric to plot",options=metrics)
+
+                                fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
+                                st.write(fig4)
+
+            else:
+                st.write("Create a forecast to see metrics")
 
         st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
@@ -539,4 +542,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **05/03/2021**")
+    st.write("Last updated: **06/03/2021**")

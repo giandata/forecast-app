@@ -117,7 +117,7 @@ m = Prophet(**params).fit(df)  # Fit model with given params
 df_cv = cross_validation(m, initial=initial,
                                 period=period,
                                 horizon=horizon,
-                                parallel="threads")
+                                parallel="processes")
 df_p = performance_metrics(df_cv, rolling_window=1)
 rmses.append(df_p['rmse'].values[0])
 
@@ -456,7 +456,7 @@ if page == "Application":
 
         st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
-        
+        st.markdown("""For more informations visit the [documentation](https://facebook.github.io/prophet/docs/diagnostics.html#hyperparameter-tuning)""")
 
         param_grid = {  
                             'changepoint_prior_scale': [0.01, 0.1, 0.5],
@@ -501,6 +501,7 @@ if page == "Application":
                     st.write(tuning_results)
                             
                     best_params = all_params[np.argmin(rmses)]
+                    
                     st.write('The best parameter combination is:')
                     st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
                     st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")

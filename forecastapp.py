@@ -491,11 +491,12 @@ if page == "Application":
                         tuning_results['rmse'] = rmses
                         st.write(tuning_results)
                             
-                        best_params = all_params[np.argmin(rmses)]
-                        st.write('The best parameter combination is:')
-                        st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
-                        st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
-                    
+                    best_params = all_params[np.argmin(rmses)]
+                    st.write('The best parameter combination is:')
+                    st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
+                    st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
+
+
             else:
                 st.write("Create a model to optimize")    
 

@@ -475,21 +475,30 @@ if page == "Application":
                     with st.spinner("Finding best combination. Please wait.."):
 
                         
-
+                        try:
                         # Use cross validation to evaluate all parameters
-                        for params in all_params:
-                            m = Prophet(**params).fit(df)  # Fit model with given params
-                            df_cv = cross_validation(m, initial=initial,
-                                                            period=period,
-                                                            horizon=horizon,
-                                                            parallel="threads")
-                            df_p = performance_metrics(df_cv, rolling_window=1)
-                            rmses.append(df_p['rmse'].values[0])
+                            for params in all_params:
+                                m = Prophet(**params).fit(df)  # Fit model with given params
+                                df_cv = cross_validation(m, initial=initial,
+                                                                period=period,
+                                                                horizon=horizon,
+                                                                parallel="processes")
+                                df_p = performance_metrics(df_cv, rolling_window=1)
+                                rmses.append(df_p['rmse'].values[0])
+                        except:
+                            for params in all_params:
+                                m = Prophet(**params).fit(df)  # Fit model with given params
+                                df_cv = cross_validation(m, initial=initial,
+                                                                period=period,
+                                                                horizon=horizon,
+                                                                parallel="threads")
+                                df_p = performance_metrics(df_cv, rolling_window=1)
+                                rmses.append(df_p['rmse'].values[0])
 
-                        # Find the best parameters
-                        tuning_results = pd.DataFrame(all_params)
-                        tuning_results['rmse'] = rmses
-                        st.write(tuning_results)
+                    # Find the best parameters
+                    tuning_results = pd.DataFrame(all_params)
+                    tuning_results['rmse'] = rmses
+                    st.write(tuning_results)
                             
                     best_params = all_params[np.argmin(rmses)]
                     st.write('The best parameter combination is:')
@@ -502,7 +511,7 @@ if page == "Application":
 
         st.subheader('6. Export results ✨')
         
-        st.write("Finally you can export your result forecast, model configuration and evaluation metrics. Follow")
+        st.write("Finally you can export your result forecast, model configuration and evaluation metrics.")
         
         if input:
             if output == 1:

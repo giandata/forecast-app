@@ -407,14 +407,9 @@ if page == "Application":
             horizon = st.number_input(value= 90, label="horizon",min_value=30,max_value=366)
             horizon = str(horizon) + " days"
 
-            st.write(f"Here we do cross-validation to assess prediction performance on a horizon of **{horizon}** days, starting with **{initial}** days of training data in the first cutoff and then making predictions every **{period}** days.")
+            st.write(f"Here we do cross-validation to assess prediction performance on a horizon of **{horizon}** days, starting with **{initial}** days of training data in the first cutoff and then making predictions every **{period}**.")
             st.markdown("""For more information read the [documentation](https://facebook.github.io/prophet/docs/diagnostics.html#parallelizing-cross-validation)""")
-        with st.beta_expander("Metrics definition"):
-                    st.write("Mse: mean absolute error")
-                    st.write("Rmse: mean squared error")
-                    st.write("Mae: Mean average error")
-                    st.write("Mape: Mean average percentage error")
-                    st.write("Mdape: Median average percentage error")
+        
             
         with st.beta_expander("Metrics"):
             
@@ -423,31 +418,30 @@ if page == "Application":
                     if st.checkbox('Calculate metrics'):
                         with st.spinner("Cross validating.."):
                             try:
-                                try:     
-                                    df_cv = cross_validation(m, initial=initial,
+                                df_cv = cross_validation(m, initial=initial,
                                                         period=period, 
                                                         horizon = horizon,
-                                                        parallel="processes")
-                                    
-                            #In Python, the string for initial, period, and horizon should be in the format used by Pandas Timedelta, which accepts units of days or shorter.
-                            # custom cutoffs = pd.to_datetime(['2019-11-31', '2019-06-31', '2021-01-31'])
-                                except:
-                                    df_cv = cross_validation(m, initial=initial,
-                                                        period=period, 
-                                                        horizon = horizon,
-                                                        parallel="threads")
-                                    
+                                                        parallel="processes")                                        
+                            
                             except:
-                                st.write("Invalid configuration")    
-                            df_p = performance_metrics(df_cv)
-                            st.dataframe(df_p)
+                                st.write("Invalid configuration")
+                            
+                            df_p= performance_metrics(df_cv)
+                            st.write(df_p)
+                            metrics = 1
 
-                            if st.checkbox("Plot metrics",key='metrics'):
+                        if metrics == 1:
+                            st.markdown('**Metrics definition**')
+                            st.write("Mse: mean absolute error")
+                            st.write("Mae: Mean average error")
+                            st.write("Mape: Mean average percentage error")
+                            st.write("Mse: mean absolute error")
+                            st.write("Mdape: Median average percentage error")
 
-                                metrics = ['mse','rmse','mae','mape','mdape','coverage']
 
-                                selected_metric = st.selectbox(label="metric to plot",options=metrics)
-
+                            metrics = ['Choose a metric','mse','rmse','mae','mape','mdape','coverage']
+                            selected_metric = st.selectbox("Select metric to plot",options=metrics)
+                            if selected_metric != metrics[0]:
                                 fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
                                 st.write(fig4)
 
@@ -459,8 +453,8 @@ if page == "Application":
         st.markdown("""For more informations visit the [documentation](https://facebook.github.io/prophet/docs/diagnostics.html#hyperparameter-tuning)""")
 
         param_grid = {  
-                            'changepoint_prior_scale': [0.01, 0.1, 0.5],
-                            'seasonality_prior_scale': [0.1, 1.0, 10.0],
+                            'changepoint_prior_scale': [0.01, 0.1, 0.5, 1.0],
+                            'seasonality_prior_scale': [0.1, 1.0, 5.0, 10.0],
                         }
 
         # Generate all combinations of parameters

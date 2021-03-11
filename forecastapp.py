@@ -497,9 +497,11 @@ if page == "Application":
                     best_params = all_params[np.argmin(rmses)]
                     
                     st.write('The best parameter combination is:')
-                    st.write(f"Changepoint prior scale: ** {best_params[0]} ** ")
-                    st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
-
+                    st.write(best_params)
+                    #st.write(f"Changepoint prior scale:  {best_params[0]} ")
+                    #st.write(f"Seasonality prior scale: {best_params[1]}  ")
+                    st.write(" You may repeat the process using these parameters in the configuration section 2")
+                    
 
             else:
                 st.write("Create a model to optimize")    
@@ -535,6 +537,7 @@ if page == "Application":
                                 json.dump(model_to_json(m), fout)  
             else:
                 st.write("Generate a forecast to download.")
+            
 
 if page == "About":
     st.image("prophet.png")

@@ -160,6 +160,7 @@ if page == "Application":
     st.title('Forecast application 🧙🏻')
     st.write('This app enables you to generate time series forecast withouth any dependencies.')
     st.markdown("""The forecasting library used is **[Prophet](https://facebook.github.io/prophet/)**.""")
+    caching.clear_cache()
     df =  pd.DataFrame()   
 
     st.subheader('1. Data loading 🏋️')
@@ -537,14 +538,14 @@ if page == "Application":
             
                 with col2:
                     if st.button("Export model metrics (.csv)"):
-                        with st.spinner("Exporting..",key="metrics"):
+                        with st.spinner("Exporting.."):
                             b64 = base64.b64encode(df_p.encode()).decode()
                             href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
                             st.markdown(href, unsafe_allow_html=True)
 
                 with col3:
                     if st.button('Export model configuration (.json)'):
-                        with st.spinner("Exporting..",key="json"):
+                        with st.spinner("Exporting.."):
                             with open('serialized_model.json', 'w') as fout:
                                 json.dump(model_to_json(m), fout)  
 

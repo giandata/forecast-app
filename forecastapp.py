@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit import caching
 import pandas as pd
 import numpy as np
 
@@ -141,6 +142,10 @@ if page == "Application":
     #else :
     #    st.code("nothing to show")
     with st.sidebar:
+        cache = st.button(label='Clear cache')
+        if cache:
+            caching.clear_cache()
+
         with st.beta_expander("Code snippets"):
             snippet = st.radio('Code snippets',options=code_options)    
             if snippet == code_options[0]:
@@ -251,7 +256,14 @@ if page == "Application":
 
             if growth == 'logistic':
                 st.info('Configure saturation')
-                
+
+                #saturation = st.select_slider("Set floor and cap",options=range(0.0,1.0))
+                #st.write(saturation)
+                #floor= saturation[0]
+                #cap= saturation[1]
+                #df['cap']=cap
+                #df['floor']=floor
+
                 cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
                 floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
                 if floor > cap:
@@ -512,11 +524,11 @@ if page == "Application":
         
         if input:
             if output == 1:
-                col1, col2, col3 = st.beta_columns(3)
+                col1, col2, col3, col4 = st.beta_columns(3)
 
                 with col1:
                     if st.button('Export forecast (.csv)'):
-                        with st.spinner("Exporting..",key="csv"):
+                        with st.spinner("Exporting.."):
 
                             export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']]).to_csv()
                             b64 = base64.b64encode(export_forecast.encode()).decode()
@@ -535,6 +547,11 @@ if page == "Application":
                         with st.spinner("Exporting..",key="json"):
                             with open('serialized_model.json', 'w') as fout:
                                 json.dump(model_to_json(m), fout)  
+
+                with col4:
+                    if st.button('Clear cache memory please'):
+                        caching.clear_cache()
+
             else:
                 st.write("Generate a forecast to download.")
             

@@ -142,8 +142,7 @@ if page == "Application":
     #else :
     #    st.code("nothing to show")
     with st.sidebar:
-        cache = st.button(label='Clear cache')
-        if cache:
+        if st.button(label='Clear cache'):
             caching.clear_cache()
 
         with st.beta_expander("Code snippets"):

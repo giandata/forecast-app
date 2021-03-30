@@ -3,6 +3,7 @@ from streamlit import caching
 import pandas as pd
 import numpy as np
 
+import pystan
 from fbprophet import Prophet
 from fbprophet.plot import add_changepoints_to_plot
 from fbprophet.diagnostics import cross_validation

@@ -1,7 +1,8 @@
-altair==4.1.0
-numpy==1.19.2
-streamlit==0.77.0
-plotly==4.14.3
-fbprophet==0.7.1
 pandas==1.2.2
+pystan==2.19.1.1
 holidays==0.10.5.2
+fbprophet==0.7.1
+plotly==4.14.3
+altair==4.1.0
+streamlit==0.77.0
+numpy==1.19.2

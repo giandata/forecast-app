@@ -136,11 +136,7 @@ st.write(f"Seasonality prior scale: ** {best_params[1]} ** ")
 code_options = ["Dataframe information","Model fitting","Cross validation","Hyperparam tuning"]
 
 if page == "Application":
-    #check = None  
-    #if check is not None:
-    #    st.code(code1)
-    #else :
-    #    st.code("nothing to show")
+    
     with st.sidebar:
         if st.button(label='Clear cache'):
             caching.clear_cache()
@@ -257,13 +253,6 @@ if page == "Application":
             if growth == 'logistic':
                 st.info('Configure saturation')
 
-                #saturation = st.select_slider("Set floor and cap",options=range(0.0,1.0))
-                #st.write(saturation)
-                #floor= saturation[0]
-                #cap= saturation[1]
-                #df['cap']=cap
-                #df['floor']=floor
-
                 cap = st.slider('Cap',min_value=0.0,max_value=1.0,step=0.05)
                 floor = st.slider('Floor',min_value=0.0,max_value=1.0,step=0.05)
                 if floor > cap:
@@ -282,7 +271,6 @@ if page == "Application":
             
             
         with st.beta_expander('Holidays'):
-            #st.markdown("""[Available countries list](https://github.com/dr-prodigy/python-holidays) """)
             
             countries = ['Country name','Italy','Spain','United States','France','Germany','Ukraine']
             

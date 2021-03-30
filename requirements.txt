@@ -3,5 +3,5 @@ holidays==0.10.5.2
 numpy==1.20.1
 plotly==4.14.3
 pandas==1.2.2
-pystan==3.0.0
+pystan==[*]
 fbprophet==0.7.1

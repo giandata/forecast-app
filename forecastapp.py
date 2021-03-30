@@ -20,6 +20,7 @@ import plotly.figure_factory as ff
 import base64
 import itertools
 from datetime import datetime
+import json
 
 st.set_page_config(page_title ="Forecast App",
                     page_icon="🔮",
@@ -512,7 +513,7 @@ if page == "Application":
         
         if input:
             if output == 1:
-                col1, col2, col3, col4 = st.beta_columns(3)
+                col1, col2, col3, col4 = st.beta_columns(4)
 
                 with col1:
                     if st.button('Export forecast (.csv)'):
@@ -524,17 +525,22 @@ if page == "Application":
                             st.markdown(href, unsafe_allow_html=True)
             
                 with col2:
-                    if st.button("Export model metrics (.csv)"):
-                        with st.spinner("Exporting.."):
-                            b64 = base64.b64encode(df_p.encode()).decode()
-                            href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
-                            st.markdown(href, unsafe_allow_html=True)
+                    try:    
+                        if metrics == 1:
+                            if st.button("Export model metrics (.csv)"):
+                                with st.spinner("Exporting.."):
+                                    b64 = base64.b64encode(df_p.encode()).decode()
+                                    href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
+                                    st.markdown(href, unsafe_allow_html=True)
+                    except:
+                        st.write("No metrics to export")
 
                 with col3:
-                    if st.button('Export model configuration (.json)'):
-                        with st.spinner("Exporting.."):
-                            with open('serialized_model.json', 'w') as fout:
-                                json.dump(model_to_json(m), fout)  
+                    if st.button('Save model configuration (.json) in memory'):
+                        with open('serialized_model.json', 'w') as fout:
+                            json.dump(model_to_json(m), fout)
+                            
+                    
 
                 with col4:
                     if st.button('Clear cache memory please'):
@@ -555,4 +561,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **06/03/2021**")
+    st.write("Last updated: **30/03/2021**")

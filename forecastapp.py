@@ -23,14 +23,19 @@ import itertools
 from datetime import datetime
 import json
 
-st.set_page_config(page_title ="Forecast App",initial_sidebar_state="collapsed")
+st.set_page_config(page_title ="Forecast App",
+                    initial_sidebar_state="collapsed",
+                    page_icon="🔮")
 
 
 tabs = ["Application","About"]
 page = st.sidebar.radio("Tabs",tabs)
 
 
-#@st.cache(persist=False,suppress_st_warning=True,show_spinner= True)
+@st.cache(persist=False,
+          allow_output_mutation=True,
+          suppress_st_warning=True,
+          show_spinner= True)
 def load_csv():
     
     df_input = pd.DataFrame()  
@@ -140,6 +145,7 @@ if page == "Application":
     with st.sidebar:
         if st.button(label='Clear cache'):
             caching.clear_cache()
+            
 
         with st.beta_expander("Code snippets"):
             snippet = st.radio('Code snippets',options=code_options)    
@@ -152,13 +158,13 @@ if page == "Application":
             if snippet == code_options[3]:
                 st.code(code4)
 
-    st.title('Forecast application ')
+    st.title('Forecast application 🧙🏻')
     st.write('This app enables you to generate time series forecast withouth any dependencies.')
     st.markdown("""The forecasting library used is **[Prophet](https://facebook.github.io/prophet/)**.""")
     caching.clear_cache()
     df =  pd.DataFrame()   
 
-    st.subheader('1. Data loading ')
+    st.subheader('1. Data loading 🏋️')
     st.write("Import a time series csv file.")
     with st.beta_expander("Data format"): 
         st.write("The dataset can contain multiple columns but you will need to select a column to be used as dates and a second column containing the metric you wish to forecast. The columns will be renamed as **ds** and **y** to be compliant with Prophet. Even though we are using the default Pandas date parser, the ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric.")
@@ -327,7 +333,7 @@ if page == "Application":
             st.markdown("""For more information read the [documentation](https://facebook.github.io/prophet/docs/diagnostics.html#parallelizing-cross-validation)""")
 
     with st.beta_container():
-        st.subheader("3. Forecast ")
+        st.subheader("3. Forecast 🔮")
         st.write("Fit the model on the data and generate future prediction.")
         st.write("Load a time series to activate.")
         
@@ -385,10 +391,10 @@ if page == "Application":
                     with st.spinner("Loading.."):
                         fig3 = m.plot_components(forecast)
                         st.write(fig3)
-                except:
+                except: 
                     st.warning("Requires forecast generation..") 
 
-        st.subheader('4. Model validation ')
+        st.subheader('4. Model validation 🧪')
         st.write("In this section it is possible to do cross-validation of the model.")
         with st.beta_expander("Explanation"):
             st.markdown("""The Prophet library makes it possible to divide our historical data into training data and testing data for cross validation. The main concepts for cross validation with Prophet are:""")
@@ -448,7 +454,7 @@ if page == "Application":
             else:
                 st.write("Create a forecast to see metrics")
 
-        st.subheader('5. Hyperparameter Tuning ')
+        st.subheader('5. Hyperparameter Tuning 🧲')
         st.write("In this section it is possible to find the best combination of hyperparamenters.")
         st.markdown("""For more informations visit the [documentation](https://facebook.github.io/prophet/docs/diagnostics.html#hyperparameter-tuning)""")
 
@@ -506,7 +512,7 @@ if page == "Application":
             else:
                 st.write("Create a model to optimize")    
 
-        st.subheader('6. Export results ')
+        st.subheader('6. Export results ✨')
         
         st.write("Finally you can export your result forecast, model configuration and evaluation metrics.")
         

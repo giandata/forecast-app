@@ -540,12 +540,12 @@ if page == "Application":
                 with col2:
                     
                     if st.button("Export model metrics (.csv)"):
-                        if metrics == 1:
-                                df_p = df_p.to_csv(decimal=',')
-                                b64 = base64.b64encode(df_p.encode()).decode()
-                                href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
-                                st.markdown(href, unsafe_allow_html=True)
-                        else:
+                        try:
+                            df_p = df_p.to_csv(decimal=',')
+                            b64 = base64.b64encode(df_p.encode()).decode()
+                            href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
+                            st.markdown(href, unsafe_allow_html=True)
+                        except:
                             st.write("No metrics to export")
 
                 with col3:

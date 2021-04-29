@@ -84,6 +84,7 @@ future = m.make_future_dataframe(periods=periods_input,freq='D')
 future['cap']=cap
 future['floor']=floor
                 """
+
 code3 = """
 try:     
     df_cv = cross_validation(m, initial=initial,
@@ -435,25 +436,25 @@ if page == "Application":
                                 df_p= performance_metrics(df_cv)
                                 st.write(df_p)
                                 metrics = 1
+                            except:
+                                st.write("Invalid configuration. Try other parameters.")
+                                metrics = 0
 
-                                st.markdown('**Metrics definition**')
-                                st.write("Mse: mean absolute error")
-                                st.write("Mae: Mean average error")
-                                st.write("Mape: Mean average percentage error")
-                                st.write("Mse: mean absolute error")
-                                st.write("Mdape: Median average percentage error")
 
+                            st.markdown('**Metrics definition**')
+                            st.write("Mse: mean absolute error")
+                            st.write("Mae: Mean average error")
+                            st.write("Mape: Mean average percentage error")
+                            st.write("Mse: mean absolute error")
+                            st.write("Mdape: Median average percentage error")
+
+                            if metrics == 1:
 
                                 metrics = ['Choose a metric','mse','rmse','mae','mape','mdape','coverage']
                                 selected_metric = st.selectbox("Select metric to plot",options=metrics)
                                 if selected_metric != metrics[0]:
                                     fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
                                     st.write(fig4)
-                                    
-
-                            except:
-                                st.write("Invalid configuration. Try other parameters.")
-                                metrics = 0
                         
             else:
                 st.write("Create a forecast to see metrics")
@@ -574,4 +575,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **11/04/2021**")
+    st.write("Last updated: **29/04/2021**")

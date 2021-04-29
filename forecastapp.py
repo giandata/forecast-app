@@ -321,8 +321,8 @@ if page == "Application":
         with st.beta_expander('Hyperparameters'):
             st.write('In this section it is possible to tune the scaling coefficients.')
             
-            seasonality_scale_values= [0.1, 1.0, 10.0]    
-            changepoint_scale_values= [0.01, 0.1, 0.5]
+            seasonality_scale_values= [0.1, 1.0,5.0,10.0]    
+            changepoint_scale_values= [0.01, 0.1, 0.5,1.0]
 
             st.write("The changepoint prior scale determines the flexibility of the trend, and in particular how much the trend changes at the trend changepoints.")
             changepoint_scale= st.select_slider(label= 'Changepoint prior scale',options=changepoint_scale_values)
@@ -429,28 +429,31 @@ if page == "Application":
                                                         horizon = horizon,
                                                         parallel="processes")                                        
                             
-                            except:
-                                st.write("Invalid configuration")
                             
-                            df_p= performance_metrics(df_cv)
-                            st.write(df_p)
-                            metrics = 1
+                            
+                                df_p= performance_metrics(df_cv)
+                                st.write(df_p)
+                                metrics = 1
 
-                        if metrics == 1:
-                            st.markdown('**Metrics definition**')
-                            st.write("Mse: mean absolute error")
-                            st.write("Mae: Mean average error")
-                            st.write("Mape: Mean average percentage error")
-                            st.write("Mse: mean absolute error")
-                            st.write("Mdape: Median average percentage error")
+                            except:
+                                st.write("Invalid configuration. Try other parameters.")
+                        try:
+                            if metrics == 1:
+                                st.markdown('**Metrics definition**')
+                                st.write("Mse: mean absolute error")
+                                st.write("Mae: Mean average error")
+                                st.write("Mape: Mean average percentage error")
+                                st.write("Mse: mean absolute error")
+                                st.write("Mdape: Median average percentage error")
 
 
-                            metrics = ['Choose a metric','mse','rmse','mae','mape','mdape','coverage']
-                            selected_metric = st.selectbox("Select metric to plot",options=metrics)
-                            if selected_metric != metrics[0]:
-                                fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
-                                st.write(fig4)
-
+                                metrics = ['Choose a metric','mse','rmse','mae','mape','mdape','coverage']
+                                selected_metric = st.selectbox("Select metric to plot",options=metrics)
+                                if selected_metric != metrics[0]:
+                                    fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
+                                    st.write(fig4)
+                        except:
+                            pass
             else:
                 st.write("Create a forecast to see metrics")
 
@@ -524,7 +527,10 @@ if page == "Application":
                     if st.button('Export forecast (.csv)'):
                         with st.spinner("Exporting.."):
 
-                            export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']]).to_csv()
+                            #export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']]).to_csv()
+                            export_forecast = pd.DataFrame(forecast[['ds','yhat_lower','yhat','yhat_upper']])
+                            st.write(export_forecast.head())
+                            export_forecast= export_forecast.to_csv(decimal=',')
                             b64 = base64.b64encode(export_forecast.encode()).decode()
                             href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **forecast.csv**)'
                             st.markdown(href, unsafe_allow_html=True)
@@ -566,4 +572,4 @@ if page == "About":
     st.markdown("""**[Source code](https://github.com/giandata/forecast-app)**""")
 
     st.write("Created on 27/02/2021")
-    st.write("Last updated: **30/03/2021**")
+    st.write("Last updated: **11/04/2021**")

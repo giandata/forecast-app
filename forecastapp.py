@@ -452,6 +452,8 @@ if page == "Application":
                                 if selected_metric != metrics[0]:
                                     fig4 = plot_cross_validation_metric(df_cv, metric=selected_metric)
                                     st.write(fig4)
+                                    
+
                         except:
                             pass
             else:
@@ -540,6 +542,7 @@ if page == "Application":
                         if metrics == 1:
                             if st.button("Export model metrics (.csv)"):
                                 with st.spinner("Exporting.."):
+                                    df_p = df_p.to_csv(decimal=',')
                                     b64 = base64.b64encode(df_p.encode()).decode()
                                     href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
                                     st.markdown(href, unsafe_allow_html=True)

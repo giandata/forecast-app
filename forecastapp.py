@@ -436,11 +436,6 @@ if page == "Application":
                                 st.write(df_p)
                                 metrics = 1
 
-                            except:
-                                st.write("Invalid configuration. Try other parameters.")
-                                metrics = 0
-                        try:
-                            if metrics == 1:
                                 st.markdown('**Metrics definition**')
                                 st.write("Mse: mean absolute error")
                                 st.write("Mae: Mean average error")
@@ -456,8 +451,10 @@ if page == "Application":
                                     st.write(fig4)
                                     
 
-                        except:
-                            pass
+                            except:
+                                st.write("Invalid configuration. Try other parameters.")
+                                metrics = 0
+                        
             else:
                 st.write("Create a forecast to see metrics")
 

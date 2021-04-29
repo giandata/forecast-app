@@ -421,6 +421,7 @@ if page == "Application":
             
             if input:
                 if output == 1:
+                    metrics = 0
                     if st.checkbox('Calculate metrics'):
                         with st.spinner("Cross validating.."):
                             try:
@@ -437,6 +438,7 @@ if page == "Application":
 
                             except:
                                 st.write("Invalid configuration. Try other parameters.")
+                                metrics = 0
                         try:
                             if metrics == 1:
                                 st.markdown('**Metrics definition**')
@@ -526,6 +528,7 @@ if page == "Application":
                 col1, col2, col3, col4 = st.beta_columns(4)
 
                 with col1:
+                    
                     if st.button('Export forecast (.csv)'):
                         with st.spinner("Exporting.."):
 
@@ -538,16 +541,15 @@ if page == "Application":
                             st.markdown(href, unsafe_allow_html=True)
             
                 with col2:
-                    try:    
+                    
+                    if st.button("Export model metrics (.csv)"):
                         if metrics == 1:
-                            if st.button("Export model metrics (.csv)"):
-                                with st.spinner("Exporting.."):
-                                    df_p = df_p.to_csv(decimal=',')
-                                    b64 = base64.b64encode(df_p.encode()).decode()
-                                    href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
-                                    st.markdown(href, unsafe_allow_html=True)
-                    except:
-                        st.write("No metrics to export")
+                                df_p = df_p.to_csv(decimal=',')
+                                b64 = base64.b64encode(df_p.encode()).decode()
+                                href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (click derecho > guardar como **metrics.csv**)'
+                                st.markdown(href, unsafe_allow_html=True)
+                        else:
+                            st.write("No metrics to export")
 
                 with col3:
                     if st.button('Save model configuration (.json) in memory'):
